@@ -2,6 +2,7 @@ import { generateBingoBoard } from "../index";
 import { exampleBingoList } from "./exampleBingoList";
 import { RowAnalyzer } from "../analysis/rowAnalysis";
 import { DEFAULT_PROFILES } from "../constants/profiles";
+import { Profile, Profiles } from "../types/settings";
 
 // this file shows a few examples of how to use the generator
 // run this file with `npm start`
@@ -25,9 +26,28 @@ const customProfile = {
 };
 
 const boardCustomProfile = generateBingoBoard(exampleBingoList, mode, seed, customProfile);
-console.log(`Generated after ${board?.iterations} iteration(s):`);
+console.log(`Generated after ${boardCustomProfile?.iterations} iteration(s):`);
 console.log(boardCustomProfile?.goalNames);
 
 // print the synergy analysis of a row (obviously banned to use for races)
 const rowAnalyzer = new RowAnalyzer(exampleBingoList, "normal");
 rowAnalyzer.analyzeRow(seed, "col4");
+
+const customProfile2: Profile = {
+  minimumSynergy: -3,
+  maximumSynergy: 28,
+  maximumIndividualSynergy: 3.75,
+  initialOffset: 1,
+  maximumOffset: 2,
+  baselineTime: 24.75,
+  timePerDifficulty: 0.75,
+  tooMuchSynergy: 100,
+  useFrequencyBalancing: true,
+} as const;
+
+console.log(customProfile2);
+const boardCustomProfile2 = generateBingoBoard(exampleBingoList, mode, seed, customProfile2, 100, 7, 7);
+console.log(`Generated after ${boardCustomProfile2?.iterations} iteration(s):`);
+console.log(boardCustomProfile2?.goalNames);
+
+

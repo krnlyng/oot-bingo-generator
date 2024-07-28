@@ -6,7 +6,7 @@ import { SynergyCalculator } from "./synergyCalculator";
 import { flattenGoalList, parseSynergyFilters, sortAscending, sortDescending } from "./util";
 import { BingoBoard } from "./bingoBoard";
 import { PotentialBingoBoard } from "./potentialBingoBoard";
-import { MAX_ITERATIONS, ROWS_PER_INDEX, SQUARE_POSITIONS } from "./constants/board";
+import { MAX_ITERATIONS, getRowsPerIndex, getSquarePositions, getDiagonalsNoCenter, getNonDiagonals, getCenterSquare } from "./constants/board";
 
 export default class BingoGenerator {
   private readonly isBlackout: boolean;
@@ -70,9 +70,8 @@ export default class BingoGenerator {
     // fill in the goals of the board in a random order
     const populationOrder = this.generatePopulationOrder();
 
-    for (const position of SQUARE_POSITIONS) {
+    for (const position of getSquarePositions()) {
       const nextPosition = populationOrder[position];
-
       const pickedGoal = this.pickGoalForPosition(nextPosition);
 
       if (pickedGoal) {
@@ -183,8 +182,7 @@ export default class BingoGenerator {
     potentialSquareWithGoal: SquareWithGoal,
     positionOfSquare: number
   ): { maximumSynergy: number; minimumSynergy: number } {
-    const rowsOfSquare = ROWS_PER_INDEX[positionOfSquare];
-
+    const rowsOfSquare = getRowsPerIndex(positionOfSquare);
     let maximumSynergy = 0;
     let minimumSynergy = this.profile.tooMuchSynergy;
 
@@ -211,13 +209,13 @@ export default class BingoGenerator {
   private generatePopulationOrder(): number[] {
     let populationOrder = [];
 
-    const centerSquare = 12;
+    const centerSquare = getCenterSquare();
     populationOrder[0] = centerSquare;
 
-    const diagonals = this.shuffle([0, 6, 18, 24, 4, 8, 16, 20]);
+    const diagonals = this.shuffle(getDiagonalsNoCenter());
     populationOrder = populationOrder.concat(diagonals);
 
-    const nonDiagonals = this.shuffle([1, 2, 3, 5, 7, 9, 10, 11, 13, 14, 15, 17, 19, 21, 22, 23]);
+    const nonDiagonals = this.shuffle(getNonDiagonals());
     populationOrder = populationOrder.concat(nonDiagonals);
 
     this.movePositionsWithHighestDifficultyToFront(3, populationOrder);

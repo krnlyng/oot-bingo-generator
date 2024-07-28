@@ -1,52 +1,141 @@
-import { RowName } from "../types/board";
-
 export const MAX_ITERATIONS = 100;
 
-export const SQUARES_PER_ROW = 5;
+var SQUARES_PER_ROW = 5;
+var SQUARES_PER_COL = 5;
 
-export const SQUARE_POSITIONS = [
-  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-] as const;
+var rows_set = false;
+var columns_set = false;
 
-export const INDICES_PER_ROW: { [key in RowName]: number[] } = {
-  row1: [0, 1, 2, 3, 4],
-  row2: [5, 6, 7, 8, 9],
-  row3: [10, 11, 12, 13, 14],
-  row4: [15, 16, 17, 18, 19],
-  row5: [20, 21, 22, 23, 24],
-  col1: [0, 5, 10, 15, 20],
-  col2: [1, 6, 11, 16, 21],
-  col3: [2, 7, 12, 17, 22],
-  col4: [3, 8, 13, 18, 23],
-  col5: [4, 9, 14, 19, 24],
-  tlbr: [0, 6, 12, 18, 24],
-  bltr: [4, 8, 12, 16, 20],
-};
+export function setSquaresPerRow(rows: number) {
+    rows_set = true;
+    SQUARES_PER_ROW = rows;
+}
 
-export const ROWS_PER_INDEX: { [key: number]: RowName[] } = {
-  0: ["row1", "col1", "tlbr"],
-  1: ["row1", "col2"],
-  2: ["row1", "col3"],
-  3: ["row1", "col4"],
-  4: ["row1", "col5", "bltr"],
-  5: ["row2", "col1"],
-  6: ["row2", "col2", "tlbr"],
-  7: ["row2", "col3"],
-  8: ["row2", "col4", "bltr"],
-  9: ["row2", "col5"],
-  10: ["row3", "col1"],
-  11: ["row3", "col2"],
-  12: ["row3", "col3", "tlbr", "bltr"],
-  13: ["row3", "col4"],
-  14: ["row3", "col5"],
-  15: ["row4", "col1"],
-  16: ["row4", "col2", "bltr"],
-  17: ["row4", "col3"],
-  18: ["row4", "col4", "tlbr"],
-  19: ["row4", "col5"],
-  20: ["row5", "col1", "bltr"],
-  21: ["row5", "col2"],
-  22: ["row5", "col3"],
-  23: ["row5", "col4"],
-  24: ["row5", "col5", "tlbr"],
-};
+export function setSquaresPerCol(columns: number) {
+    columns_set = true;
+    SQUARES_PER_COL = columns;
+}
+
+export function getSquaresPerRow() {
+    if (!rows_set) {
+        console.log("Board size not yet initialized");
+        console.trace();
+    }
+    return SQUARES_PER_ROW;
+}
+
+export function getSquaresPerCol() {
+    if (!columns_set) {
+        console.log("Board size not yet initialized");
+        console.trace();
+    }
+    return SQUARES_PER_COL;
+}
+
+export function getSquarePositions() {
+    const positions = [];
+
+    for (let r = 0; r < getSquaresPerRow() * getSquaresPerCol(); r++) {
+        positions.push(r);
+    }
+
+    return positions;
+}
+
+export function getIndicesPerRow(rowName: String) {
+    const indices = [];
+
+    for (let r = 0; r < getSquaresPerRow(); r++) {
+        if (rowName === ("row" + (r + 1))) {
+            for (let c = 0; c < getSquaresPerCol(); c++) {
+                indices.push(r * getSquaresPerRow() + c)
+            }
+        }
+    }
+
+    for (let c = 0; c < getSquaresPerCol(); c++) {
+        if (rowName === ("col" + (c + 1))) {
+            for (let r = 0; r < getSquaresPerRow(); r++) {
+                indices.push(r * getSquaresPerRow() + c)
+            }
+        }
+    }
+
+    // No diagonals when number of rows != number of cols.
+    if (getSquaresPerRow() === getSquaresPerCol()) {
+        if (rowName === "tlbr") {
+            for (let r = 0; r < getSquaresPerRow(); r++) {
+                indices.push(r + getSquaresPerRow() * r);
+            }
+        }
+        if (rowName === "bltr") {
+            for (let r = 0; r < getSquaresPerRow(); r++) {
+                indices.push(getSquaresPerRow() - r - 1 + getSquaresPerRow() * r);
+            }
+        }
+    }
+
+    return indices;
+}
+
+export function getRowNames() {
+    const result = [];
+
+    for (let r = 0; r < getSquaresPerRow(); r++) {
+        result.push("row" + (r + 1));
+    }
+
+    for (let c = 0; c < getSquaresPerCol(); c++) {
+        result.push("col" + (c + 1));
+    }
+
+    // No diagonals when number of rows != number of cols.
+    if (getSquaresPerRow() === getSquaresPerCol()) {
+        result.push("bltr");
+        result.push("tlbr");
+    }
+
+    return result;
+}
+
+export function getRowsPerIndex(index: number) {
+    const result = [];
+    let row = Math.floor(index / getSquaresPerRow());
+    let col = index % getSquaresPerRow();
+
+    // No diagonals when number of rows != number of cols.
+    if (getSquaresPerRow() === getSquaresPerCol()) {
+        if (row === col) {
+            result.push("tlbr");
+        }
+
+        if (getSquaresPerRow() - row - 1 === col) {
+            result.push("bltr");
+        }
+    }
+
+    result.push("row" + (row + 1));
+    result.push("col" + (col + 1));
+    return result;
+}
+
+export function getCenterSquare() {
+    return Math.floor((getSquaresPerRow() * getSquaresPerCol()) / 2)
+}
+
+export function getDiagonalsNoCenter() {
+    const diagonal1 = getIndicesPerRow("tlbr");
+    const diagonal2 = getIndicesPerRow("bltr");
+    return diagonal1.concat(diagonal2).filter( x => (x != getCenterSquare()));
+}
+
+export function getNonDiagonals() {
+    const diagonals = getDiagonalsNoCenter();
+
+    const squarePositions = getSquarePositions();
+
+    const difference = squarePositions.filter( x => ((!diagonals.includes(x)) && (x != getCenterSquare())) );
+
+    return difference;
+}
+

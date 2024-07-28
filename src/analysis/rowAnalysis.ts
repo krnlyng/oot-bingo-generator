@@ -1,11 +1,12 @@
 import { SynergyCalculator } from "../synergyCalculator";
 import { Mode, Profile } from "../types/settings";
 import { Synergies, SynergyFilters } from "../types/synergies";
-import { hasGoal, RowName, Square } from "../types/board";
+import { hasGoal, Square } from "../types/board";
 import { BingoList } from "../types/goalList";
 import BingoGenerator from "../generator";
 import { extractGoalList, parseSynergyFilters } from "../util";
 import { DEFAULT_PROFILES } from "../constants/profiles";
+import { getRowNames } from "../constants/board";
 
 export class RowAnalyzer {
   private readonly generator: BingoGenerator;
@@ -25,7 +26,7 @@ export class RowAnalyzer {
     );
   }
 
-  public analyzeRow(seed: number, row: RowName) {
+  public analyzeRow(seed: number, row: String) {
     const board = this.generator.generateBoard(seed);
     if (!board) {
       return;
@@ -70,7 +71,7 @@ class SynergyCalculatorAnalysis extends SynergyCalculator {
     };
   }
 
-  public printSynergyReport(squares: Square[], row?: RowName) {
+  public printSynergyReport(squares: Square[], row: String) {
     const squaresWithGoal = squares.filter(hasGoal);
     const report = this.getSynergyReport(squares);
 

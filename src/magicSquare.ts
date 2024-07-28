@@ -1,4 +1,4 @@
-import { SQUARE_POSITIONS } from "./constants/board";
+import { getSquarePositions } from "./constants/board";
 
 /**
  * Calculate the magic square numbers of all positions on the board, given a seed
@@ -6,7 +6,7 @@ import { SQUARE_POSITIONS } from "./constants/board";
  * @return Array of magic square numbers, one for each position on the board
  */
 export function generateMagicSquare(seed: number): number[] {
-  return SQUARE_POSITIONS.map((position) => magicSquareNumber(position, seed));
+  return getSquarePositions().map((position) => magicSquareNumber(position, seed));
 }
 
 function magicSquareNumber(position: number, seed: number): number {

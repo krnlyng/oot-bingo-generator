@@ -1,6 +1,6 @@
-import { hasGoal, RowName, Square, SquareWithGoal } from "./types/board";
+import { hasGoal, Square, SquareWithGoal } from "./types/board";
 import { Goal } from "./types/goalList";
-import { INDICES_PER_ROW } from "./constants/board";
+import { getIndicesPerRow, getRowNames } from "./constants/board";
 
 /**
  * Successfully generated bingo board. All the squares have a goal assigned to it.
@@ -35,7 +35,7 @@ export class BingoBoard {
     return this.goals.map((goal) => goal.name);
   }
 
-  public getRow(row: RowName): SquareWithGoal[] {
-    return INDICES_PER_ROW[row].map((index) => this._squares[index]);
+  public getRow(row: String): SquareWithGoal[] {
+    return getIndicesPerRow(row).map((index) => this._squares[index]);
   }
 }

@@ -4,6 +4,7 @@ import { extractGoalList } from "./util";
 import { Mode, Profile } from "./types/settings";
 import { BingoBoard } from "./bingoBoard";
 import { DEFAULT_PROFILES } from "./constants/profiles";
+import { setSquaresPerRow, setSquaresPerCol } from "./constants/board";
 
 /**
  * Main function for generating bingo boards (used in live versions)
@@ -56,8 +57,13 @@ export function generateBingoBoard(
   mode: Mode,
   seed: number,
   profile?: Profile,
-  maxIterations?: number
+  maxIterations?: number,
+  boardRows = 5,
+  boardColumns = 5,
 ): BingoBoard | undefined {
+  setSquaresPerRow(boardRows);
+  setSquaresPerCol(boardColumns);
+
   const goalList = extractGoalList(bingoList, mode);
   if (!goalList) {
     return;

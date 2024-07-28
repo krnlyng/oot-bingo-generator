@@ -2,7 +2,7 @@ import { hasGoal, Square, SquareWithGoal } from "./types/board";
 import { CombinedSynergies, Synergies, SynergyFilters, SynergyType } from "./types/synergies";
 import { Profile } from "./types/settings";
 import { removeHighestNumber, sortAscending, sortDescending } from "./util";
-import { SQUARES_PER_ROW } from "./constants/board";
+import { getSquaresPerRow } from "./constants/board";
 
 export class SynergyCalculator {
   profile: Profile;
@@ -153,7 +153,7 @@ export class SynergyCalculator {
       const rowtypeSynergy = rowtypeSynergies[rowtypeCategory];
 
       // don't consider rowtype synergies until we've filled up the entire row
-      if (rowtypeSynergy.length < SQUARES_PER_ROW) {
+      if (rowtypeSynergy.length < getSquaresPerRow()) {
         return filteredRowtypeSynergies;
       }
 
